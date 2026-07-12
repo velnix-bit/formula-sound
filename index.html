@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="数式を入力するとグラフを描き、その形を音として再生できる無料Webアプリです。通常関数、媒介変数曲線、極座標に対応しています。">
+  <meta name="theme-color" content="#0b0f19">
+  <title>Formula Sound｜数式をグラフと音に変換</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
+  <script defer src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html">Formula Sound</a>
+      <nav class="nav-links" aria-label="メインメニュー">
+        <a href="how-to-use.html">使い方</a>
+        <a href="mechanism.html">仕組み</a>
+        <a href="about.html">運営者情報</a>
+        <a href="contact.html">お問い合わせ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Formula Sound</h1>
+      <p>数式を入力するとグラフを描き、その形を音程に変換して再生します。通常関数、媒介変数曲線、極座標を無料で試せます。</p>
+    </section>
+
+    <section class="panel" aria-labelledby="controls-title">
+      <h2 id="controls-title">数式を入力</h2>
+      <div class="control-grid">
+        <div class="field">
+          <label for="mode">グラフの種類</label>
+          <select id="mode" onchange="changeMode()">
+            <option value="normal">通常関数</option>
+            <option value="parametric">媒介変数曲線</option>
+            <option value="polar">極座標</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wave">音の波形</label>
+          <select id="wave">
+            <option value="sine">サイン波：滑らか</option>
+            <option value="square">矩形波：ゲーム音風</option>
+            <option value="sawtooth">のこぎり波：鋭い</option>
+            <option value="triangle">三角波：やわらかい</option>
+          </select>
+        </div>
+
+        <div id="normalInputs" class="field full">
+          <label for="formulaY">y =</label>
+          <input id="formulaY" value="sin(x)" autocomplete="off" spellcheck="false" aria-label="yの数式">
+        </div>
+
+        <div id="parametricInputs" class="field full" hidden>
+          <label for="formulaX">x =</label>
+          <input id="formulaX" value="sin(3*t)" autocomplete="off" spellcheck="false" aria-label="xの媒介変数式">
+          <label for="formulaParamY">y =</label>
+          <input id="formulaParamY" value="sin(4*t)" autocomplete="off" spellcheck="false" aria-label="yの媒介変数式">
+        </div>
+
+        <div id="polarInputs" class="field full" hidden>
+          <label for="formulaR">r =</label>
+          <input id="formulaR" value="1 + cos(theta)" autocomplete="off" spellcheck="false" aria-label="rの極座標式">
+        </div>
+
+        <div class="field">
+          <label for="volume">音量</label>
+          <div class="range-row">
+            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.45">
+            <span id="volumeValue" class="range-value">45%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="speed">再生速度</label>
+          <div class="range-row">
+            <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1">
+            <span id="speedValue" class="range-value">1.0×</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button type="button" onclick="drawGraph()">グラフを描く</button>
+        <button type="button" class="danger" onclick="stopSound()">停止</button>
+      </div>
+      <div class="notice">使用例：<code>sin(x)</code>、<code>x^2</code>、<code>exp(-x^2)*sin(20*x)</code>。累乗には <code>^</code> を使用できます。</div>
+    </section>
+
+    <section class="panel" aria-labelledby="gallery-title">
+      <h2 id="gallery-title">数式ギャラリー</h2>
+      <div class="gallery-grid">
+        <button class="secondary" onclick="setExample('normal','x')">直線</button>
+        <button class="secondary" onclick="setExample('normal','x^2')">放物線</button>
+        <button class="secondary" onclick="setExample('normal','sin(x)')">正弦波</button>
+        <button class="secondary" onclick="setExample('normal','sin(x)+0.5*sin(7*x)')">合成波</button>
+        <button class="secondary" onclick="setExample('normal','exp(-x^2)*sin(20*x)')">パルス</button>
+        <button class="secondary" onclick="setExample('polar','1+cos(theta)')">カージオイド</button>
+        <button class="secondary" onclick="setExample('polar','sin(5*theta)')">バラ曲線</button>
+        <button class="secondary" onclick="setExample('polar','1+0.4*cos(10*theta)')">星形</button>
+        <button class="secondary" onclick="setParamExample('sin(3*t)','sin(4*t)')">リサージュ</button>
+        <button class="secondary" onclick="setParamExample('sin(t)','sin(2*t)')">無限記号</button>
+        <button class="secondary" onclick="setParamExample('16*sin(t)^3','13*cos(t)-5*cos(2*t)-2*cos(3*t)-cos(4*t)')">ハート</button>
+      </div>
+    </section>
+
+    <section class="formula-card" aria-live="polite">
+      <div class="formula-label">現在の数式</div>
+      <div id="formulaDisplay" class="formula-text">y = sin(x)</div>
+      <div class="button-row">
+        <button type="button" class="main-play-button" onclick="playSound()">▶ 再生</button>
+      </div>
+      <p id="info" class="status">グラフを準備しています。</p>
+    </section>
+
+    <div id="graph" aria-label="数式のグラフ"></div>
+
+    <section class="content-card">
+      <h2>このアプリについて</h2>
+      <p>Formula Soundは、数式の値を音の周波数へ変換し、グラフ上の点を移動しながら再生する体験型Webアプリです。数学を視覚だけでなく聴覚でも楽しむことを目的としています。</p>
+      <p><a href="how-to-use.html">詳しい使い方を見る</a> ／ <a href="mechanism.html">音に変わる仕組みを見る</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="about.html">運営者情報</a>
+      <a href="contact.html">お問い合わせ</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+      <a href="terms.html">利用規約</a>
+    </div>
+    <small>© 2026 Formula Sound</small>
+  </footer>
+</body>
+</html>
