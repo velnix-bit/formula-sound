@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 独自ドメイン決定後に example.com を置き換えてください -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://example.com/</loc></url>
-  <url><loc>https://example.com/how-to-use.html</loc></url>
-  <url><loc>https://example.com/mechanism.html</loc></url>
-  <url><loc>https://example.com/about.html</loc></url>
-  <url><loc>https://example.com/contact.html</loc></url>
-  <url><loc>https://example.com/privacy.html</loc></url>
-  <url><loc>https://example.com/terms.html</loc></url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/how-to-use.html</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/mechanism.html</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/about.html</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/contact.html</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/privacy.html</loc>
+  </url>
+  <url>
+    <loc>https://velnix-bit.github.io/formula-sound/terms.html</loc>
+  </url>
 </urlset>
