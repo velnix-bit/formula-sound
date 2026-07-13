@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# 独自ドメイン決定後に有効なURLへ変更してください
-# Sitemap: https://example.com/sitemap.xml
+Sitemap: https://velnix-bit.github.io/formula-sound/sitemap.xml
